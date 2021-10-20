@@ -1,0 +1,21 @@
+{
+    "name": "kodus/predis-simple-cache",
+    "description": "A lightweight bridge from predis/predis to a PSR-16 simple-cache interface",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Thomas Nordahl Pedersen",
+            "email": "thno@fynskemedier.dk"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "psr/simple-cache": "^1.0",
+        "predis/predis": "^1.1"
+    },
+    "autoload": {
+        "\\Kodus\\PredisSimpleCache\\": "src/"
+    }
+}
