@@ -12,10 +12,23 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "php": "^7.4|^8.0",
         "psr/simple-cache": "^1.0",
         "predis/predis": "^1.1"
     },
     "autoload": {
-        "\\Kodus\\PredisSimpleCache\\": "src/"
+        "psr-4": {
+            "Kodus\\PredisSimpleCache\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Kodus\\PredisSimpleCache\\Test\\": "tests/integration/"
+        }
+    },
+    "require-dev": {
+        "codeception/codeception": "^4.1",
+        "codeception/module-redis": "^1.2",
+        "codeception/module-asserts": "^1.3"
     }
 }

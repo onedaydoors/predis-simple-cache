@@ -1,0 +1,11 @@
+actor: IntegrationTester
+modules:
+    enabled:
+        - Helper\Integration
+        - Asserts
+        - Kodus\PredisSimpleCache\Test\RedisModule:
+            host: '127.0.0.1'
+            port: 6379
+            database: 0
+            # Don't change this. Use the actor class and codeception hooks to control test preconditions instead.
+            cleanupBefore: 'never'

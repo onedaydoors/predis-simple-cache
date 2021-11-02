@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    name: PHP ${{ matrix.php }}
+    name: ${{matrix.operating-system}}, PHP ${{ matrix.php }}, Redis ${{matrix.redis-version}}
     
     runs-on: ${{ matrix.operating-system }}
     
@@ -21,7 +21,6 @@ jobs:
         uses: nanasess/setup-php@master
         with:
           php-version: ${{ matrix.php }}
-          extensions: redis
           
       - name: Start Redis
         uses: supercharge/redis-github-action@1.2.0
@@ -32,5 +31,4 @@ jobs:
         run: composer install 
       
       - name: Run tests
-        run: php vendor/bin/codecept
-        
+        run: php vendor/bin/codecept run 
