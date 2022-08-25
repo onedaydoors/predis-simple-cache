@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Kodus\PredisSimpleCache\Test;
 
@@ -9,6 +10,7 @@ use IntegrationTester;
 use Kodus\PredisSimpleCache\PredisSimpleCache;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
+use TypeError;
 
 class PredisSimpleCacheCest
 {
@@ -261,7 +263,7 @@ class PredisSimpleCacheCest
 
     public function getMultipleNoIterable(IntegrationTester $I): void
     {
-        $I->expectThrowable(InvalidArgumentException::class, fn() => $this->cache->getMultiple('key'));
+        $I->expectThrowable(TypeError::class, fn() => $this->cache->getMultiple('key'));
     }
 
     /**
@@ -290,7 +292,7 @@ class PredisSimpleCacheCest
 
     public function setMultipleNoIterable(IntegrationTester $I): void
     {
-        $I->expectThrowable(InvalidArgumentException::class, fn() => $this->cache->setMultiple('key'));
+        $I->expectThrowable(TypeError::class, fn() => $this->cache->setMultiple('key'));
     }
 
     /**
@@ -326,7 +328,7 @@ class PredisSimpleCacheCest
 
     public function deleteMultipleNoIterable(IntegrationTester $I): void
     {
-        $I->expectThrowable(InvalidArgumentException::class, fn() => $this->cache->deleteMultiple('key'));
+        $I->expectThrowable(TypeError::class, fn() => $this->cache->deleteMultiple('key'));
     }
 
     /**
@@ -336,7 +338,7 @@ class PredisSimpleCacheCest
     {
         $ttl = $example['ttl'];
 
-        $I->expectThrowable(InvalidArgumentException::class, fn() => $this->cache->set('key', 'value', $ttl));
+        $I->expectThrowable(TypeError::class, fn() => $this->cache->set('key', 'value', $ttl));
     }
 
     /**
@@ -347,7 +349,7 @@ class PredisSimpleCacheCest
         $ttl = $example['ttl'];
 
         $I->expectThrowable(
-            InvalidArgumentException::class,
+            TypeError::class,
             fn() => $this->cache->setMultiple(['key' => 'value'], $ttl)
         );
     }
@@ -575,24 +577,38 @@ class PredisSimpleCacheCest
         ];
     }
 
-    protected function invalidKeys(): array
+    /**
+     * ['0' => 'some data'] and [0 => 'some data'] are equivalent in PHP, so we have to accept integers as keys, when
+     * reading or writing multiple entries with getMultiple() or setMultiple().
+     *
+     * But when using get() or set(), integer keys are clearly integers and are considered invalid.
+     */
+    protected function invalidKeyTypes(): array
     {
         return array_merge(
-            $this->invalidArrayKeys(),
+            $this->invalidArrayKeyTypes(),
             [
                 ['key' => 0],
                 ['key' => 2],
             ]);
     }
 
-    protected function invalidArrayKeys(): array
+    protected function invalidArrayKeyTypes(): array
     {
         return [
-            ['key' => ''],
+            ['key' => new \stdClass()],
             ['key' => true],
             ['key' => false],
             ['key' => null],
             ['key' => 2.5],
+            ['key' => ['array']],
+        ];
+    }
+
+    protected function invalidKeys(): array
+    {
+        return [
+            ['key' => ''],
             ['key' => '{str'],
             ['key' => 'rand{'],
             ['key' => 'rand{str'],
@@ -603,12 +619,18 @@ class PredisSimpleCacheCest
             ['key' => 'rand\\str'],
             ['key' => 'rand@str'],
             ['key' => 'rand:str'],
-            ['key' => new \stdClass()],
-            ['key' => ['array']],
         ];
     }
 
-    protected function invalidTTL(): array
+    protected function invalidArrayKeys(): array
+    {
+        return array_merge(
+            $this->invalidKeys(),
+            $this->invalidArrayKeyTypes(),
+        );
+    }
+
+    protected function invalidTtl(): array
     {
         return [
             ['ttl' => ''],
@@ -616,8 +638,8 @@ class PredisSimpleCacheCest
             ['ttl' => false],
             ['ttl' => 'abc'],
             ['ttl' => 2.5],
-            ['ttl' => ' 1'], // Could be cast to a int
-            ['ttl' => '12foo'], // Could be cast to a int
+            ['ttl' => ' 1'], // Could be cast to an int
+            ['ttl' => '12foo'], // Could be cast to an int
             ['ttl' => '025'], // Could be interpreted as hex
             ['ttl' => new \stdClass()],
             ['ttl' => ['array']],

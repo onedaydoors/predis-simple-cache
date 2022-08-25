@@ -29,14 +29,14 @@ class PredisSimpleCache implements CacheInterface
         $this->default_ttl = $default_ttl;
     }
 
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $this->validateKey($key);
 
         return $this->client->exists($key) ? unserialize($this->client->get($key)) : $default;
     }
 
-    public function set($key, $value, $ttl = null): bool
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
         $this->validateKey($key);
 
@@ -57,7 +57,7 @@ class PredisSimpleCache implements CacheInterface
         }
     }
 
-    public function delete($key): bool
+    public function delete(string $key): bool
     {
         $this->validateKey($key);
 
@@ -73,7 +73,7 @@ class PredisSimpleCache implements CacheInterface
         return mb_strpos('OK', $result) !== false;
     }
 
-    public function getMultiple($keys, $default = null)
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $this->validateIterable($keys);
 
@@ -93,7 +93,7 @@ class PredisSimpleCache implements CacheInterface
         return $result;
     }
 
-    public function setMultiple($values, $ttl = null): bool
+    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
         $this->validateIterable($values);
 
@@ -120,7 +120,7 @@ class PredisSimpleCache implements CacheInterface
         return true;
     }
 
-    public function deleteMultiple($keys): bool
+    public function deleteMultiple(iterable $keys): bool
     {
         /** @var $keys array|Traversable */
         $this->validateIterable($keys);
@@ -143,7 +143,7 @@ class PredisSimpleCache implements CacheInterface
         return true;
     }
 
-    public function has($key): bool
+    public function has(string $key): bool
     {
         $this->validateKey($key);
 
