@@ -1,5 +1,7 @@
 kodus/predis-simple-cache
 =========================
+[![PHP Version](https://img.shields.io/badge/php-8.0%2B-blue.svg)](https://packagist.org/packages/kodus/predis-simple-cache)
+![Build Status](https://github.com/kodus/predis-simple-cache/actions/workflows/test.yml/badge.svg)
 
 A lightweight bridge from [predis/predis](https://packagist.org/packages/predis/predis) to the 
 [PSR-16 simple-cache interface](https://www.php-fig.org/psr/psr-16/)
